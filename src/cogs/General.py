@@ -12,7 +12,7 @@ class General(commands.Cog):
 
     @commands.command()
     async def ping(self, ctx: commands.Context):
-        ctx.send("Pong!")
+        await ctx.send("Pong!")
 
 def setup(bot: MusicBot):
     bot.add_cog(General(bot))

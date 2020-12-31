@@ -12,3 +12,8 @@ class MusicBot(commands.Bot):
         owners = [int(x.strip()) for x in os.environ.get("OWNERS").split(",")]
         if user.id in owners: return True
         return await super().is_owner(user)
+
+    def load_cogs(self):
+        for ext in [f.split(".")[0] for f in os.listdir("src/cogs") if os.path.isfile(os.path.join("src/cogs", f))]:
+            self.load_extension(f"src.cogs.{ext}")
+        self.load_extension("jishaku")
