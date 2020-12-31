@@ -23,7 +23,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
     @commands.command()
     async def play(self, ctx: commands.Context, *, query: str):
         if not await self.check_vc(ctx): return
-        tracks = await self.bot.wavelink.get_tracks(query if self.is_valid_url else f"ytsearch: {query}")
+        tracks = await self.bot.wavelink.get_tracks(query if self.is_valid_url(query) else f"ytsearch: {query}")
 
         if not tracks:
             return await ctx.send("Could not find any songs with that query.")
