@@ -1,5 +1,8 @@
 from discord.ext import commands
 from src.structures.client import MusicBot
+import discord
+import traceback
+import sys
 
 class General(commands.Cog):
     def __init__(self, bot: MusicBot) -> None:
@@ -9,6 +12,25 @@ class General(commands.Cog):
     async def on_ready(self):
         tag = f"{self.bot.user.name}#{self.bot.user.discriminator}"
         print(f"Logged in as {tag}")
+
+    @commands.Cog.listener()
+    async def on_command_error(self, ctx: commands.Context, error: commands.CommandError):
+        if hasattr(ctx.command, 'on_error'):
+            return
+
+        cog = ctx.cog
+        if cog:
+            if cog._get_overridden_method(cog.cog_command_error) is not None:
+                return
+
+        ignored = (commands.CommandNotFound, )
+        error = getattr(error, 'original', error)
+
+        if isinstance(error, ignored):
+            return
+
+        else:
+            await ctx.send(error.args)
 
     @commands.command()
     async def ping(self, ctx: commands.Context):
