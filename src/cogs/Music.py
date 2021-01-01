@@ -29,7 +29,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
             return await ctx.send(embed=self.bot.util.embed(description="Aku tidak mendapatkan hasil dari query itu."))
 
         music = self.bot.get_music(ctx.guild.id)
-        player = music.player()
+        player = music.player
         if not player.is_connected:
             await music.join(ctx.author.voice.channel)
 
@@ -76,7 +76,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
 
     async def check_playing(self, ctx: commands.Context) -> bool:
         music = self.bot.get_music(ctx.guild.id)
-        if not music.player().is_playing:
+        if not music.player.is_playing:
             await ctx.send(embed=self.bot.util.embed(description="Sedang tidak memainkan apa pun."))
             return False
         return True

@@ -13,6 +13,7 @@ class MusicHandler:
         self.bot = bot
         self.guild = guild
 
+    @property
     def player(self) -> wavelink.Player:
         return self.bot.wavelink.get_player(self.guild.id)
 
@@ -20,33 +21,33 @@ class MusicHandler:
         self.text_channel = text_ch
 
     async def join(self, vc: discord.VoiceChannel):
-        if not self.player().is_connected: await self.player().connect(vc.id)
+        if not self.player.is_connected: await self.player.connect(vc.id)
     
     async def start(self):
-        if self.player().is_connected: await self.player().play(self.queue[0])
+        if self.player.is_connected: await self.player.play(self.queue[0])
     
     async def pause(self):
-        if self.player().is_connected and self.player().is_playing and not self.player().paused:
-            await self.player().set_pause(True)
+        if self.player.is_connected and self.player.is_playing and not self.player.paused:
+            await self.player.set_pause(True)
 
     async def resume(self):
-        if self.player().is_connected and self.player().is_playing and self.player().paused:
-            await self.player().set_pause(False)
+        if self.player.is_connected and self.player.is_playing and self.player.paused:
+            await self.player.set_pause(False)
 
     async def skip(self):
-        if self.player().is_connected and self.player().is_playing:
-            await self.player().stop()
+        if self.player.is_connected and self.player.is_playing:
+            await self.player.stop()
 
     async def stop(self):
-        if self.player().is_connected and self.player().is_playing:
+        if self.player.is_connected and self.player.is_playing:
             self.queue = []
             self.loop = False
             await self.skip()
 
     async def set_volume(self, vol: int):
-        if self.player().is_connected and self.player().is_playing:
-            await self.player().set_volume(vol)
+        if self.player.is_connected and self.player.is_playing:
+            await self.player.set_volume(vol)
 
     async def destroy(self):
-        if self.player().is_connected: await self.player().destroy()
+        if self.player.is_connected: await self.player.destroy()
         del self.bot.musics[self.guild.id]
