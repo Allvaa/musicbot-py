@@ -39,6 +39,16 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
             await music.start()
         music.set_text_channel(ctx.channel)
 
+    @commands.command(aliases=["repeat"])
+    async def loop(self, ctx: commands.Context):
+        if not await self.check_playing(ctx): return
+        if not await self.check_vc(ctx): return
+        
+        music = self.bot.get_music(ctx.guild.id)
+        music.loop = not music.loop
+
+        await ctx.message.add_reaction("🔁") if music.loop else await ctx.message.add_reaction("▶️")
+
     @commands.command()
     async def skip(self, ctx: commands.Context):
         if not await self.check_playing(ctx): return
