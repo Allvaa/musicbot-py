@@ -1,5 +1,6 @@
 from discord.ext import commands
 from src.structures import music
+from src.util import Util
 import discord
 import os
 
@@ -7,6 +8,7 @@ class MusicBot(commands.Bot):
     musics = {}
 
     def __init__(self):
+        self.util = Util(self)
         super(MusicBot, self).__init__(
             command_prefix=os.environ.get("PREFIX"),
             intents=discord.Intents(guilds=True, members=True, voice_states=True, messages=True))
