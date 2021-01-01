@@ -6,5 +6,5 @@ class Util:
     def __init__(self, bot: "client.MusicBot") -> None:
         self.bot = bot
 
-    def embed(self) -> discord.Embed:
-        return discord.Embed(colour=Colour.blurple())
+    def embed(self, **kwargs) -> discord.Embed:
+        return discord.Embed(colour=Colour.blurple(), **kwargs)

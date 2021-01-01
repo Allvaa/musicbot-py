@@ -51,11 +51,11 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
     async def check_playing(self, ctx: commands.Context) -> bool:
         music = self.bot.get_music(ctx.guild.id)
         if not music.player().is_playing:
-            await ctx.send("Currently not playing anything")
+            await ctx.send(embed=self.bot.util.embed(description="Sedang tidak memainkan apapun."))
             return False
         return True
 
-    def is_valid_url(url: str) -> bool:
+    def is_valid_url(self, url: str) -> bool:
         return bool(re.compile(r"^https?:\/\/((([a-z\d]([a-z\d-]*[a-z\d])*)\.)+[a-z]{2,}|((\d{1,3}\.){3}\d{1,3}))(:\d+)?(\/[-a-z\d%_.~+]*)*(\?[;&a-z\d%_.~+=-]*)?(#[-a-z\d_]*)?$", flags=re.I).match(url))
 
     @wavelink.WavelinkMixin.listener()
