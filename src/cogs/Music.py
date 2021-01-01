@@ -39,6 +39,14 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
             await music.start()
         music.set_text_channel(ctx.channel)
 
+    @commands.command()
+    async def stop(self, ctx: commands.Context):
+        if not await self.check_playing(ctx): return
+        if not await self.check_vc(ctx): return
+        
+        await ctx.message.add_reaction("⏹️")
+        await self.bot.get_music(ctx.guild.id).stop()
+
     async def check_vc(self, ctx: commands.Context) -> bool:
         if not ctx.author.voice:
             await ctx.send(embed=self.bot.util.embed(description="Kamu tidak terhubung dengan voice channel mana pun."))
