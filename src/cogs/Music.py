@@ -26,7 +26,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
         tracks = await self.bot.wavelink.get_tracks(query if self.is_valid_url(query) else f"ytsearch: {query}")
 
         if not tracks:
-            return await ctx.send("Could not find any songs with that query.")
+            return await ctx.send(embed=self.bot.util.embed(description="Aku tidak mendapatkan hasil dari query itu."))
 
         music = self.bot.get_music(ctx.guild.id)
         player = music.player()
@@ -34,24 +34,24 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
             await music.join(ctx.author.voice.channel)
 
         music.queue.append(tracks[0])
-        if player.is_playing: await ctx.send(f"Added {str(tracks[0])} to the queue.")
+        if player.is_playing: await ctx.send(embed=self.bot.util.embed(description=f"Menambahkan **{tracks[0].title}** ke antrian."))
         if not player.is_playing:
             await music.start()
         music.set_text_channel(ctx.channel)
 
     async def check_vc(self, ctx: commands.Context) -> bool:
         if not ctx.author.voice:
-            await ctx.send("You aren't connected to any voice channels")
+            await ctx.send(embed=self.bot.util.embed(description="Kamu tidak terhubung dengan voice channel mana pun."))
             return False
         elif ctx.me.voice and ctx.me.voice.channel != ctx.author.voice.channel:
-            await ctx.send(f"You need to be in {ctx.me.voice.channel.mention}")
+            await ctx.send(embed=self.bot.util.embed(description=f"Kamu harus berada di {ctx.me.voice.channel.mention}."))
             return False
         else: return True
 
     async def check_playing(self, ctx: commands.Context) -> bool:
         music = self.bot.get_music(ctx.guild.id)
         if not music.player().is_playing:
-            await ctx.send(embed=self.bot.util.embed(description="Sedang tidak memainkan apapun."))
+            await ctx.send(embed=self.bot.util.embed(description="Sedang tidak memainkan apa pun."))
             return False
         return True
 
@@ -63,7 +63,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
         music = self.bot.get_music(payload.player.guild_id)
         music.current = music.queue.pop(0)
 
-        if music.text_channel: await music.text_channel.send(f"Now playing {music.current.title}")
+        if music.text_channel: await music.text_channel.send(embed=self.bot.util.embed(description=f"Sekarang memainkan **{music.current.title}**."))
 
     @wavelink.WavelinkMixin.listener()
     async def on_track_end(self, node: wavelink.Node, payload: wavelink.TrackEnd):
@@ -77,7 +77,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
         if music.loop: music.queue.append(music.previous)
 
         if not music.queue:
-            if music.text_channel: await music.text_channel.send("Queue is empty")
+            if music.text_channel: await music.text_channel.send(embed=self.bot.util.embed(description="Antrian kosong. Meninggalkan voice channel."))
             return await music.destroy()
 
         await music.start()
@@ -85,7 +85,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
     @wavelink.WavelinkMixin.listener()
     async def on_track_exception(self, node: wavelink.Node, payload: wavelink.TrackException):
         music = self.bot.get_music(payload.player.guild_id)
-        if music.text_channel: await music.text_channel.send(f"An error occured: {payload.error}")
+        if music.text_channel: await music.text_channel.send(f"Terjadi kesalahan: {payload.error}")
 
 def setup(bot: MusicBot):
     bot.add_cog(Music(bot))
