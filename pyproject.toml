@@ -7,7 +7,7 @@ license = "MIT"
 
 [tool.poetry.dependencies]
 python = "^3.8"
-"discord.py" = "^1.5.1"
+"discord.py" = "1.6.0"
 python-dotenv = "^0.15.0"
 wavelink = "^0.9.6"
 jishaku = "^1.20.0"
