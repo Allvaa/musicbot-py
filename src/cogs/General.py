@@ -1,12 +1,9 @@
 from discord.ext import commands
 from discord.http import Route
 from src.structures.client import MusicBot
-import zlib
-
-inflator = zlib.decompressobj()
+from src.structures.interaction import Interaction
 
 class General(commands.Cog):
-    _buffer = bytearray()
     def __init__(self, bot: MusicBot) -> None:
         self.bot = bot
 
@@ -16,17 +13,8 @@ class General(commands.Cog):
         print(f"Logged in as {tag}")
 
     @commands.Cog.listener()
-    async def on_socket_response(self, msg):
-        if msg["t"] != "INTERACTION_CREATE": return
-        interaction_id = msg["d"]["id"]
-        interaction_token = msg["d"]["token"]
-        await self.bot.http.request(Route("POST", f"/interactions/{interaction_id}/{interaction_token}/callback"), json={
-            "type": 4,
-            "data": {
-                "content": "a"
-            }
-        })
-        print(msg["d"])
+    async def on_interaction_create(self, data: Interaction):
+        print(data.id)
 
     @commands.Cog.listener()
     async def on_command_error(self, ctx: commands.Context, error: commands.CommandError):

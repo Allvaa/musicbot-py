@@ -3,13 +3,26 @@ from src.structures import music
 from src.util import Util
 import discord
 import os
+from src.structures.interaction import Interaction
+from src.structures.discord.http import ExtHttpClient
 
-class MusicBot(commands.Bot):
+class SlashClient(commands.Bot):
+    def __init__(self, command_prefix, help_command=None, description=None, **options):
+        self.ext_http = ExtHttpClient(self)
+        super().__init__(command_prefix, help_command=help_command, description=description, **options)
+        if not hasattr(self, "on_socket_response"):
+            self.add_listener(self.on_socket_response)
+            
+    async def on_socket_response(self, msg):
+        if msg["t"] != "INTERACTION_CREATE": return
+        self.dispatch("interaction_create", Interaction(self, msg["d"]))
+
+class MusicBot(SlashClient):
     musics = {}
 
     def __init__(self):
         self.util = Util(self)
-        super(MusicBot, self).__init__(
+        super().__init__(
             command_prefix=os.environ.get("PREFIX"),
             intents=discord.Intents(guilds=True, members=True, voice_states=True, messages=True))
 
